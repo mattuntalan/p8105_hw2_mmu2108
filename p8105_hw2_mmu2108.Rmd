@@ -1,0 +1,11 @@
+---
+title: "P8105_HW2"
+date: "2022-10-04"
+output: github_document
+---
+
+```{r initial, message = FALSE}
+library(tidyverse)
+
+transit = read_csv("~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+```

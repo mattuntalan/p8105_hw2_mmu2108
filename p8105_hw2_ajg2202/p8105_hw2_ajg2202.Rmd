@@ -1,22 +1,49 @@
 ---
-title: "P8105_HW2"
-date: "2022-10-04"
-output: html_document
+title: "Homework 2 solutions"
+author: "Jeff Goldsmith"
+date: '`r format(Sys.time(), "%Y-%m-%d")`'
+output: github_document
 ---
 
-```{r initial, message = FALSE}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
+```
+
+### Due date
+
+Due: October 5 at 11:59pm. 
+
+### Points
+
+| Problem         | Points    |
+|:--------------- |:--------- |
+| Problem 0       | 20        |
+| Problem 1       | --        |
+| Problem 2       | 40        |
+| Problem 3       | 40        |
+| Optional survey | No points |
+
+
+### Problem 0
+
+This solution focuses on a reproducible report containing code and text necessary for Problems 1-3, and is organized as an R Project. This was not prepared as a GitHub repo; examples for repository structure and git commits should be familiar from other elements of the course.
+
+Throughout, we use appropriate text to describe our code and results, and use clear styling to ensure code is readable. 
+
+```{r load_libraries}
 library(tidyverse)
 library(readxl)
 ```
 
-###    Problem 1
+
+### Problem 1
 
 Below we import and clean data from `NYC_Transit_Subway_Entrance_And_Exit_Data.csv`. The process begins with data import, updates variable names, and selects the columns that will be used in later parts fo this problem. We update `entry` from `yes` / `no` to a logical variable. As part of data import, we specify that `Route` columns 8-11 should be character for consistency with 1-7.
 
 ```{r}
 trans_ent = 
   read_csv(
-    "~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+    "data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
     col_types = cols(Route8 = "c", Route9 = "c", Route10 = "c", Route11 = "c")) %>% 
   janitor::clean_names() %>% 
   select(
@@ -76,42 +103,11 @@ trans_ent %>%
   distinct
 ```
 
+
+
 ### Problem 2
-```{r mr_tw}
-mr_trash = read_excel("~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/trash_wheel_collection_data.xlsx", sheet = "Mr. Trash Wheel") %>% 
-  janitor::clean_names() %>%
-  drop_na(, dumpster) %>%
-  select(-x15, -x16) %>%
-  mutate(, year = as.integer(year)) %>%
-  mutate(, sports_balls = round(sports_balls, digits = 0),
-         sports_balls = as.integer(sports_balls)) %>%
-  mutate(vessel = 'mr')
-```
 
-```{r prof_tw}
-prof_trash = read_excel("~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/trash_wheel_collection_data.xlsx", sheet = "Professor Trash Wheel") %>% 
-  janitor::clean_names() %>%
-  drop_na(, dumpster) %>%
-  mutate(vessel = 'professor')
-```
-
-
-```{r}
-trashwheel = lotr_tidy = 
-  bind_rows(mr_trash, prof_trash) %>%
-  janitor::clean_names() %>%
-  select(vessel, everything()) 
-```
-
-In total, there are `r count(trashwheel)` dumpster observations among Mr. Trash Wheel and Professor Trash Wheel.  It is notable that Professor Trash Wheel did not collect any sports balls, thus all observations are marked as 'NA' in the combined 'trashwheel' dataset.
-
-Professor Trash Wheel collected a total of `r sum(prof_trash$weight_tons)` tons of trash.  There was a total of `r sum(mr_trash$sports_balls, (381,452) na.rm = TRUE)` sports balls collected by Mr. Trash Wheel.
 
 ### Problem 3
-```{r}
-trans_ent = 
-  read_csv(
-    "~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/pols-month.csv",
-```
 
 

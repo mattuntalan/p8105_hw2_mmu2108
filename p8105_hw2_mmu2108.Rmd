@@ -96,8 +96,8 @@ prof_trash = read_excel("~/Documents/Columbia Grad School/Fall 2022/Data Science
 ```
 
 
-```{r}
-trashwheel = lotr_tidy = 
+```{r trash_merge}
+trashwheel = 
   bind_rows(mr_trash, prof_trash) %>%
   janitor::clean_names() %>%
   select(vessel, everything()) 
@@ -105,13 +105,60 @@ trashwheel = lotr_tidy =
 
 In total, there are `r count(trashwheel)` dumpster observations among Mr. Trash Wheel and Professor Trash Wheel.  It is notable that Professor Trash Wheel did not collect any sports balls, thus all observations are marked as 'NA' in the combined 'trashwheel' dataset.
 
-Professor Trash Wheel collected a total of `r sum(prof_trash$weight_tons)` tons of trash.  There was a total of `r sum(mr_trash$sports_balls, (381,452) na.rm = TRUE)` sports balls collected by Mr. Trash Wheel.
+Professor Trash Wheel collected a total of `r sum(prof_trash$weight_tons)` tons of trash.  There was a total of `r sum(mr_trash$sports_balls, na.rm = TRUE)` sports balls collected by Mr. Trash Wheel.
 
 ### Problem 3
-```{r}
-trans_ent = 
+```{r pols_clean}
+pols_tidy = 
   read_csv(
-    "~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/pols-month.csv",
+    "~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/pols-month.csv") %>%
+  janitor::clean_names() %>%
+  separate(mon, into = c("year", "month", "day"), sep = "-") %>%
+  mutate(month = as.numeric(month)) %>%
+  arrange(year, month) %>%
+  mutate(month = month.name[month]) %>%
+  mutate(year = as.numeric(year)) %>%
+  unite(president, prez_gop, prez_dem, remove = TRUE) %>%
+  select(-day)
+```
+
+```{r snp_clean}
+snp_tidy = 
+  read_csv(
+    "~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/snp.csv") %>%
+  janitor::clean_names() %>%
+  separate(date, into = c("month", "day", "year"), sep = "/") %>%
+  mutate(year = as.integer(year)) %>%
+  mutate(year = ifelse(year <= 15, year + 2000, year + 1900)) %>%
+  mutate(month = as.numeric(month)) %>%
+  arrange(year, month) %>%
+  mutate(month = month.name[month]) %>%
+  select(year, month, everything()) %>%
+  mutate(year = as.numeric(year)) %>%
+  select(-day)
+```
+
+```{r unemploy_clean}
+unemploy_tidy = 
+  read_csv(
+    "~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/unemployment.csv") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "unemployment"
+  ) %>%
+  mutate(month = match(month, tolower(month.abb))) %>%
+  mutate(month = month.name[month]) %>%
+  mutate(year = as.numeric(year))
+```
+
+```{r}
+fivethirtyeight_merge = 
+  merge(pols_tidy, snp_tidy, by = c("year", "month"))
+  
+fivethirtyeight_merge = 
+  merge(fivethirtyeight_merge, unemploy_tidy, by = c("year", "month"))
 ```
 
 

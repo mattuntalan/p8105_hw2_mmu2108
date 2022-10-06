@@ -521,14 +521,83 @@ to obtain dataframes with the required stations in rows).</p>
   janitor::clean_names() %&gt;%
   drop_na(, dumpster) %&gt;%
   mutate(vessel = &#39;professor&#39;)</code></pre>
-<pre class="r"><code>trashwheel = lotr_tidy = 
+<pre class="r"><code>trashwheel = 
   bind_rows(mr_trash, prof_trash) %&gt;%
   janitor::clean_names() %&gt;%
   select(vessel, everything()) </code></pre>
 <p>In total, there are 641 dumpster observations among Mr. Trash Wheel
-and Professor Trash Wheel. Professor Trash Wheel collected a total of
-190.12 tons of trash. There was a total of 0 sports balls collected by
-Mr. Trash Wheel.</p>
+and Professor Trash Wheel. It is notable that Professor Trash Wheel did
+not collect any sports balls, thus all observations are marked as ‘NA’
+in the combined ‘trashwheel’ dataset.</p>
+<p>Professor Trash Wheel collected a total of 190.12 tons of trash.
+There was a total of 6877 sports balls collected by Mr. Trash Wheel.</p>
+</div>
+<div id="problem-3" class="section level3">
+<h3>Problem 3</h3>
+<pre class="r"><code>pols_tidy = 
+  read_csv(
+    &quot;~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/pols-month.csv&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  separate(mon, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;%
+  mutate(month = as.numeric(month)) %&gt;%
+  arrange(year, month) %&gt;%
+  mutate(month = month.name[month]) %&gt;%
+  mutate(year = as.numeric(year)) %&gt;%
+  unite(president, prez_gop, prez_dem, remove = TRUE) %&gt;%
+  select(-day)</code></pre>
+<pre><code>## Rows: 822 Columns: 9
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl  (8): prez_gop, gov_gop, sen_gop, rep_gop, prez_dem, gov_dem, sen_dem, r...
+## date (1): mon
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>snp_tidy = 
+  read_csv(
+    &quot;~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/snp.csv&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  separate(date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep = &quot;/&quot;) %&gt;%
+  mutate(year = as.integer(year)) %&gt;%
+  mutate(year = ifelse(year &lt;= 15, year + 2000, year + 1900)) %&gt;%
+  mutate(month = as.numeric(month)) %&gt;%
+  arrange(year, month) %&gt;%
+  mutate(month = month.name[month]) %&gt;%
+  select(year, month, everything()) %&gt;%
+  mutate(year = as.numeric(year)) %&gt;%
+  select(-day)</code></pre>
+<pre><code>## Rows: 787 Columns: 2
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (1): date
+## dbl (1): close
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>unemploy_tidy = 
+  read_csv(
+    &quot;~/Documents/Columbia Grad School/Fall 2022/Data Science/HW/p8105_hw2_mmu2108/fivethirtyeight_datasets/unemployment.csv&quot;) %&gt;%
+  janitor::clean_names() %&gt;%
+  pivot_longer(
+    jan:dec,
+    names_to = &quot;month&quot;,
+    values_to = &quot;unemployment&quot;
+  ) %&gt;%
+  mutate(month = match(month, tolower(month.abb))) %&gt;%
+  mutate(month = month.name[month]) %&gt;%
+  mutate(year = as.numeric(year))</code></pre>
+<pre><code>## Rows: 68 Columns: 13
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (13): Year, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>fivethirtyeight_merge = 
+  merge(pols_tidy, snp_tidy, by = c(&quot;year&quot;, &quot;month&quot;))
+  
+fivethirtyeight_merge = 
+  merge(fivethirtyeight_merge, unemploy_tidy, by = c(&quot;year&quot;, &quot;month&quot;))</code></pre>
 </div>
 
 

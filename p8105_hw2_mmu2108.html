@@ -530,7 +530,7 @@ and Professor Trash Wheel. It is notable that Professor Trash Wheel did
 not collect any sports balls, thus all observations are marked as ‘NA’
 in the combined ‘trashwheel’ dataset.</p>
 <p>Professor Trash Wheel collected a total of 190.12 tons of trash.
-There was a total of 6877 sports balls collected by Mr. Trash Wheel.</p>
+There was a total of 856 sports balls collected by Mr. Trash Wheel.</p>
 </div>
 <div id="problem-3" class="section level3">
 <h3>Problem 3</h3>
@@ -597,7 +597,8 @@ There was a total of 6877 sports balls collected by Mr. Trash Wheel.</p>
   merge(pols_tidy, snp_tidy, by = c(&quot;year&quot;, &quot;month&quot;))
   
 fivethirtyeight_merge = 
-  merge(fivethirtyeight_merge, unemploy_tidy, by = c(&quot;year&quot;, &quot;month&quot;))</code></pre>
+  merge(fivethirtyeight_merge, unemploy_tidy, by = c(&quot;year&quot;, &quot;month&quot;)) %&gt;%
+  arrange(year, match(month, month.name))</code></pre>
 </div>
 
 
